@@ -1,0 +1,20 @@
+{
+  "name": "httpserver",
+  "version": "1.0.0",
+  "description": "local http server built with node",
+  "main": "server.js",
+  "dependencies": {
+    "connect": "^3.7.0",
+    "find": "^0.3.0",
+    "http-server": "^0.12.3",
+    "mime-types": "^2.1.27",
+    "serve-static": "^1.14.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Robert McElhinney",
+  "license": "ISC"
+}
