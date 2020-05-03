@@ -25,25 +25,25 @@ export const File = ({ file, isDir, getFiles, parentDir, currentDir }) => {
 		if (isDir) {
 			return (
 				<>
-					{/* Enter dir */}
-					{currentDir === false && 
-						<img src={iconFolder} alt="Folder" 
-								className={"h-5 w-5 md:h-6 md:w-6"} />}
-					
-					<span onClick={() => getFiles(path)}
-							className={"text-gray-700 ml-2" + 
-							(currentDir === true ? 
-							"" : " cursor-pointer") }>
-						{file}
-					</span>
-					{/* Download */}
-					<a href={"/api/downloadDir?dir="
-							+ path} download 
-							className={"absolute right-0 " + 
-							"text-gray-700 mr-8"}>
-						<img src={iconArchive} alt="Archive" 
-								className={"h-5 w-5 md:h-6 md:w-6"}/>
-					</a>
+				{/* Enter dir */}
+				{currentDir === false && 
+					<img src={iconFolder} alt="Folder" 
+							className={"h-5 w-5 md:h-6 md:w-6"} />}
+				
+				<span onClick={() => getFiles(path)}
+						className={"text-gray-700 ml-2" + 
+						(currentDir === true ? 
+						"" : " cursor-pointer") }>
+					{file}
+				</span>
+				{/* Download */}
+				<a href={"/api/downloadDir?dir="
+						+ path} download 
+						className={"absolute right-0 " + 
+						"text-gray-700 mr-8"}>
+					<img src={iconArchive} alt="Archive" 
+							className={"h-5 w-5 md:h-6 md:w-6"}/>
+				</a>
 				</>)
 		}
 		else {
@@ -61,8 +61,8 @@ export const File = ({ file, isDir, getFiles, parentDir, currentDir }) => {
     }
 
 	return (
-        <div className={"relative max-w-m rounded overflow-hidden mt-2 border-solid border-2 border-gray-300"}>
-			<div className={"px-6 py-4 flex text-sm md:text-base"}>
+        <div className={"relative rounded overflow-hidden mt-2 border-solid border-2 border-gray-300"}>
+			<div className={"px-6 py-4 flex"}>
             	{downloadLink()}
 			</div>
         </div>

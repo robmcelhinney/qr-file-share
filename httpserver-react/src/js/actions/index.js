@@ -1,6 +1,6 @@
 import { REFRESH_DIR, SET_BASE_DIR } from "../constants/action-types";
 
-export function refreshDir(payload) {
+export function setFiles(payload) {
   return { type: REFRESH_DIR, payload }
 };
 export function setBaseDir(payload) {

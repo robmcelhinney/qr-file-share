@@ -1,8 +1,10 @@
-import React, {useEffect} from 'react';
-import {useDispatch, useSelector} from "react-redux";
-import {refreshDir, setBaseDir} from "../js/actions/index.js";
-import axios from 'axios';
-import {File} from './File';
+import React, {useEffect} from 'react'
+import {useDispatch, useSelector} from "react-redux"
+import {File} from './File'
+import {getFiles, getBaseDir} from '../utils/dirHelper'
+import {setFiles, setBaseDir} from "../js/actions/index.js"
+import iconRefresh from '../assets/icons/icon-refresh.svg'
+// import axios from 'axios'
 
 export const Files = () => {
 
@@ -12,28 +14,18 @@ export const Files = () => {
     const baseDir = useSelector(state => state.baseDir)
 
 	useEffect(() => {
-        getFiles("")
+        setBaseDirRefreshFiles("")
     }, []);
-      
-    const getFiles = (path) => {
-        // console.log("getFiles");
-        if (path !== null && path !== undefined && path.length > 0) {
-            // console.log("getFiles path: ", path)
-            dispatch(setBaseDir(path + "/"))
-        }
-        else {
-            dispatch(setBaseDir("/"))
-        }
-        axios({
-			method: "GET",
-			url: "/api/files?path=" + path,
-			headers: {
-			  "Content-Type": "application/json"
-			}
-            }).then(res => {
-                // console.log("res.data: ", res.data);
-                dispatch(refreshDir(res.data))
-            });
+
+    const setBaseDirRefreshFiles = async (path) => {
+        dispatch(setBaseDir(getBaseDir(path)))
+        const files = await getFiles(path);
+        dispatch(setFiles(files))
+    }
+
+    const refreshFiles = async () => {
+        const files = await getFiles(baseDir);
+        dispatch(setFiles(files))
     }
 
     const returnToCurrent = (path) => {
@@ -45,7 +37,7 @@ export const Files = () => {
         if (baseDir !== "/") {
             return (
                 <File file={".."} isDir={true} key={".."} 
-                        getFiles={getFiles}
+                        getFiles={setBaseDirRefreshFiles}
                         parentDir={true} currentDir={false}/>
             )
         }
@@ -60,13 +52,23 @@ export const Files = () => {
     }
 
     return (
-        <div id={"file-list"} className={"mb-10 md:mb-8 w-full max-w-full"}>
-        {/* <span id={"file-list"}> */}
+        <div id={"file-list"} 
+                className={"mt-4 mb-10 md:mb-8 w-full relative max-w-m " +
+                "text-sm md:text-base"}>
+            <span className={"flex"}>
+                <span className={"h-5 w-5 md:h-6 md:w-6 ml-2"}>
+                    directory
+                </span>
+                <img src={iconRefresh} alt="Folder" 
+                        className={"absolute right-0 text-gray-700 " + 
+                            "mr-8 h-5 w-5 md:h-6 md:w-6 cursor-pointer"}
+                        onClick={refreshFiles} />
+            </span>
             {currentDir()}
             {parentDir()}
             {Object.keys(files).map(file => (
                 <File file={file} isDir={files[file]} key={file} 
-                    getFiles={getFiles} parentDir={false} 
+                    getFiles={setBaseDirRefreshFiles} parentDir={false} 
                     currentDir={false}/>
             ))}
         </div>

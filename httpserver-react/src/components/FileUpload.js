@@ -1,12 +1,25 @@
-import React, { useRef, useState } from 'react';
+import React, {useState} from 'react';
+import {useDispatch, useSelector} from "react-redux";
 import axios from 'axios';
 import Dropzone from 'react-dropzone';
+import {setFiles} from "../js/actions/index.js"
+import {getFiles} from '../utils/dirHelper'
 
 
 export const FileUpload = () => {
     const [file, setFile] = useState(''); // storing the uploaded file    // storing the recived file from backend
     const [data, getFile] = useState({ name: "", path: "" });    
     const [progress, setProgess] = useState(0); // progess bar
+
+
+	const dispatch = useDispatch()
+
+    const baseDir = useSelector(state => state.baseDir)
+
+    const refreshFiles = async () => {
+        const files = await getFiles(baseDir);
+        dispatch(setFiles(files))
+    }
 
     const handleChange = (files) => {
         setProgess(0)
@@ -30,6 +43,7 @@ export const FileUpload = () => {
             getFile({ name: res.data.name,
                      path: res.data.path
                    })
+            refreshFiles();
         }).catch(err => console.log(err))
     }    
 
@@ -52,7 +66,7 @@ export const FileUpload = () => {
                 </ul>
             </div>
             <div className="progessBar" style={{ width: progress }}>
-            {progress > 0 && progress}
+            {progress}
             </div>
             </section>
             {/* <button onClick={uploadFile} className="upbutton">

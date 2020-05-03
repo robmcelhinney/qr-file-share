@@ -1,6 +1,6 @@
 import store from "../js/store/index"; // dev
-import { refreshDir, setBaseDir } from "../js/actions/index";
+import { setFiles, setBaseDir } from "../js/actions/index";
 
 window.store = store;
-window.refreshDir = refreshDir;
+window.setFiles = setFiles;
 window.setBaseDir = setBaseDir;
