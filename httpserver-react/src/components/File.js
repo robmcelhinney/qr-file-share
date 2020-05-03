@@ -1,11 +1,14 @@
 import React from 'react'
+import {useSelector} from "react-redux";
 import iconFile from '../assets/icons/icon-file.svg'
 import iconFolder from '../assets/icons/icon-folder.svg'
 import iconArchive from '../assets/icons/icon-archive.svg'
 import {simplifyParentPath} from '../utils/pathHelper'
 
-export const File = ({ file, isDir, getFiles, baseDir, parentDir, currentDir }) => {
-      
+export const File = ({ file, isDir, getFiles, parentDir, currentDir }) => {
+	  
+    const baseDir = useSelector(state => state.baseDir)	
+
     const downloadLink = () => {
 		let path
 		if (parentDir) {

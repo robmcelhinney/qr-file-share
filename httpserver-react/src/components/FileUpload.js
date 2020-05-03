@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import axios from 'axios';
+import Dropzone from 'react-dropzone';
 
 
 export const FileUpload = () => {
@@ -7,20 +8,17 @@ export const FileUpload = () => {
     const [data, getFile] = useState({ name: "", path: "" });    
     const [progress, setProgess] = useState(0); // progess bar
 
-    const el = useRef(); // accesing input element    
-
-
-    const handleChange = (e) => {
+    const handleChange = (files) => {
         setProgess(0)
-        const file = e.target.files[0]; // accesing file
-        console.log(file);
-        setFile(file); // storing file
+        const newFile = files[0]; // accesing file
+        console.log("handleChange. file: ", file);
+        setFile(newFile); // storing file
+        uploadFile(newFile);
     }
 
-
-    const uploadFile = () => {
+    const uploadFile = (newFile) => {
         const formData = new FormData();        
-        formData.append('file', file); // appending file
+        formData.append('file', newFile); // appending file
         axios.post('/api/upload', formData, {
             onUploadProgress: (ProgressEvent) => {
                 let progress = Math.round(
@@ -28,25 +26,41 @@ export const FileUpload = () => {
                 setProgess(progress);
             }
         }).then(res => {
-            console.log(res);
+            console.log("uploaded. res: ", res);
             getFile({ name: res.data.name,
                      path: res.data.path
                    })
-        }).catch(err => console.log(err))}    
+        }).catch(err => console.log(err))
+    }    
 
-        
+
     return (
         <div>
-            <div className="file-upload">
-                <input type="file" ref={el} onChange={handleChange} />                <div className="progessBar" style={{ width: progress }}>
-                {progress}
+            <section className="container">
+            <Dropzone onDrop={handleChange}>
+                {({ getRootProps, getInputProps }) => (
+                <div {...getRootProps({ className: "dropzone" })}>
+                    <input {...getInputProps()} />
+                    <p>Drag'n'drop files, or click to select files</p>
                 </div>
-                <button onClick={uploadFile} className="upbutton">                   Upload
-                </button>
+                )}
+            </Dropzone>
+            <div>
+                <strong>Files:</strong>
+                <ul>
+                {file.name}
+                </ul>
+            </div>
+            <div className="progessBar" style={{ width: progress }}>
+            {progress > 0 && progress}
+            </div>
+            </section>
+            {/* <button onClick={uploadFile} className="upbutton">
+                Upload
+            </button> */}
             <hr />
             {/* displaying received image*/}
             {data.path && <img src={data.path} alt={data.name} />}
-            </div>
         </div>
     );
 }

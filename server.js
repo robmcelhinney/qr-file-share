@@ -150,14 +150,12 @@ async function zipDir(rel_directory, dir, res) {
 
     archive.on('warning', function(err) {
         if (err.code === 'ENOENT') {
-            // log warning
             console.log('Zipping error. ENOENT.')
         } else {
             // throw error
             throw err
         }
     });
-
     archive.on('error', function(err) {
         throw err
     });

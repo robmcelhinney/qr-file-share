@@ -1,11 +1,15 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect} from 'react';
+import {useDispatch, useSelector} from "react-redux";
+import {refreshDir, setBaseDir} from "../js/actions/index.js";
 import axios from 'axios';
 import {File} from './File';
 
 export const Files = () => {
 
-	const [files, setFiles] = useState({"loading": ""});
-	const [baseDir, setBaseDir] = useState("/");
+	const dispatch = useDispatch()
+
+    const files = useSelector(state => state.files)
+    const baseDir = useSelector(state => state.baseDir)
 
 	useEffect(() => {
         getFiles("")
@@ -15,10 +19,10 @@ export const Files = () => {
         // console.log("getFiles");
         if (path !== null && path !== undefined && path.length > 0) {
             // console.log("getFiles path: ", path)
-            setBaseDir(path + "/")
+            dispatch(setBaseDir(path + "/"))
         }
         else {
-            setBaseDir("/")
+            dispatch(setBaseDir("/"))
         }
         axios({
 			method: "GET",
@@ -26,10 +30,10 @@ export const Files = () => {
 			headers: {
 			  "Content-Type": "application/json"
 			}
-		  }).then(res => {
-            // console.log("res.data: ", res.data);
-            setFiles(res.data)
-		  });
+            }).then(res => {
+                // console.log("res.data: ", res.data);
+                dispatch(refreshDir(res.data))
+            });
     }
 
     const returnToCurrent = (path) => {
@@ -41,7 +45,7 @@ export const Files = () => {
         if (baseDir !== "/") {
             return (
                 <File file={".."} isDir={true} key={".."} 
-                        getFiles={getFiles} baseDir={baseDir}
+                        getFiles={getFiles}
                         parentDir={true} currentDir={false}/>
             )
         }
@@ -50,7 +54,7 @@ export const Files = () => {
     const currentDir = () => {
         return (
             <File file={baseDir} isDir={true} key={baseDir} 
-                    getFiles={returnToCurrent} baseDir={baseDir}
+                    getFiles={returnToCurrent}
                     parentDir={false} currentDir={true}/>
         )
     }
@@ -62,8 +66,8 @@ export const Files = () => {
             {parentDir()}
             {Object.keys(files).map(file => (
                 <File file={file} isDir={files[file]} key={file} 
-                    getFiles={getFiles} baseDir={baseDir}
-                    parentDir={false} currentDir={false}/>
+                    getFiles={getFiles} parentDir={false} 
+                    currentDir={false}/>
             ))}
         </div>
     );
