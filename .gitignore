@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/httpserver-react/node_modules
 /.pnp
 .pnp.js
 
@@ -9,7 +10,7 @@
 /coverage
 
 # production
-/build
+/httpserver-react/build
 
 # misc
 .DS_Store

@@ -4,7 +4,7 @@ import {File} from './File';
 
 export const Files = () => {
 
-	const [files, setFiles] = useState(Object);
+	const [files, setFiles] = useState({"loading": ""});
 	const [baseDir, setBaseDir] = useState("/");
 
 	useEffect(() => {
@@ -12,8 +12,9 @@ export const Files = () => {
     }, []);
       
     const getFiles = (path) => {
+        // console.log("getFiles");
         if (path !== null && path !== undefined && path.length > 0) {
-            console.log("getFiles path: ", path)
+            // console.log("getFiles path: ", path)
             setBaseDir(path + "/")
         }
         else {
@@ -21,30 +22,14 @@ export const Files = () => {
         }
         axios({
 			method: "GET",
-			url: "http://localhost:9000/api/files?path=" + path,
+			url: "/api/files?path=" + path,
 			headers: {
 			  "Content-Type": "application/json"
 			}
 		  }).then(res => {
-            console.log("res.data: ", res.data);
+            // console.log("res.data: ", res.data);
             setFiles(res.data)
 		  });
-    }
-
-    const returnToParent = (path) => {
-        console.log("returnToParent path: ", path);
-        if ((path.split("/").length-1) > 1) {
-            // remove /.. and parent dir with it. 
-            console.log("do something else: ")
-            let reverse_path = [...path].reverse().join("")
-            reverse_path = reverse_path.substring(reverse_path.indexOf("/") + 1);
-            reverse_path = reverse_path.substring(reverse_path.indexOf("/") + 1);
-            path = [...reverse_path].reverse().join("")
-        }
-        else {
-            path = "";
-        }
-        getFiles(path)
     }
 
     const returnToCurrent = (path) => {
@@ -52,11 +37,11 @@ export const Files = () => {
     }
     
     const parentDir = () => {
-        console.log("baseDir: ", baseDir)
+        // console.log("baseDir: ", baseDir)
         if (baseDir !== "/") {
             return (
                 <File file={".."} isDir={true} key={".."} 
-                        getFiles={returnToParent} baseDir={baseDir}
+                        getFiles={getFiles} baseDir={baseDir}
                         parentDir={true} currentDir={false}/>
             )
         }
@@ -71,7 +56,7 @@ export const Files = () => {
     }
 
     return (
-        <span id={"file-list"}  className={"mb-10 md:mb-8"}>
+        <div id={"file-list"} className={"mb-10 md:mb-8 w-full max-w-full"}>
         {/* <span id={"file-list"}> */}
             {currentDir()}
             {parentDir()}
@@ -80,6 +65,6 @@ export const Files = () => {
                     getFiles={getFiles} baseDir={baseDir}
                     parentDir={false} currentDir={false}/>
             ))}
-        </span>
+        </div>
     );
 }

@@ -1,120 +1,246 @@
+const myConstClass = require('./constants.js');
 const http = require('http');
 const url = require('url');
 const fs = require('fs');
+const util = require('util');
 const path = require('path');
-var find = require('find')
-var mime = require('mime-types')
-// you can pass the parameter in the command line. e.g. node static_server.js 3000
-const port = process.argv[2] || 9000;
+const archiver = require('archiver');
+const fileUpload = require('express-fileupload');
+const express = require('express'),
+    app = express(),
+    port = normalizePort(process.env.PORT || '9000'),
+    cors = require("cors");
 
-// maps file extention to MIME types
-// full list can be found here: https://www.freeformatter.com/mime-types-list.html
-// const mimeType = {
-//   '.ico': 'image/x-icon',
-//   '.html': 'text/html',
-//   '.js': 'text/javascript',
-//   '.json': 'application/json',
-//   '.css': 'text/css',
-//   '.png': 'image/png',
-//   '.jpg': 'image/jpeg',
-//   '.wav': 'audio/wav',
-//   '.mp3': 'audio/mpeg',
-//   '.svg': 'image/svg+xml',
-//   '.pdf': 'application/pdf',
-//   '.zip': 'application/zip',
-//   '.doc': 'application/msword',
-//   '.eot': 'application/vnd.ms-fontobject',
-//   '.ttf': 'application/x-font-ttf',
-// };
-
-const start_dir_name = __dirname
-
-http.createServer(function (req, res) {
-    console.log(`${req.method} ${req.url}`);
-
-    // parse URL
-    const parsedUrl = url.parse(req.url);
-
-    // extract URL path
-    // Avoid https://en.wikipedia.org/wiki/Directory_traversal_attack
-    // e.g curl --path-as-is http://localhost:9000/../fileInDanger.txt
-    // by limiting the path to current directory only
-    const sanitizePath = path.normalize(parsedUrl.pathname).replace(/^(\.\.[\/\\])+/, '');
-    let pathname = path.join(__dirname, sanitizePath);
+// app.use(cors());
+app.use(fileUpload());
+// If want to limit file size add this:
+// app.use(fileUpload({
+//     createParentPath: true,
+//     limits: { 
+//         fileSize: 2 * 1024 * 1024 * 1024 //2MB max file(s) size
+//     },
+// }));
 
 
-    let rel_dir = ""
-    console.log("pathname: ", pathname)
-    if (req.url === "/" || fs.lstatSync(pathname).isDirectory()) {
-        console.log("no req yet or dir")
-        if (req.url === "/") {
-            console.log("__dirname: ", __dirname)
-            var resDir = __dirname
-            console.log("resDir: ", resDir)
-            res.setHeader('content-type', 'text/html')
-            fs.readdir(resDir, (err, files) => {
-                res.write('<ul>')
-                files.forEach(file => {
-                    console.log("file: ", file);
-                    let fileRelative = path.relative(resDir, file)
-                    res.write('<li><a href="' + fileRelative + '">' + fileRelative + '</a></li>')
-                });
-                res.write('</ul>')
-                res.end()
-              });
-        }
-        else {
-        //     console.log("else ")
-        //     console.log("start_dir_name: ", start_dir_name)
-            rel_dir = pathname.replace(start_dir_name, "")
-            var resDir = pathname
-            // console.log("rel_dir: ", rel_dir)
-            // console.log("resDir: ", resDir)
-            // console.log("pathname: ", pathname)
-            res.setHeader('content-type', 'text/html')
-            fs.readdir(resDir, (err, files) => {
-                res.write('<ul>')
-                files.forEach(file => {
-                    res.write('<li><a href="' + rel_dir + "/" + file + '">' + file + '</a></li>')
-                });
-                res.write('</ul>')
-                res.end()
-              });
-        }
 
+app.listen(port, () => {
+    console.log("Backend server live on " + port)
+    // get local ip address from https://gist.github.com/sviatco/9054346#gistcomment-1810845
+    let address,
+    ifaces = require('os').networkInterfaces();
+    for (let dev in ifaces) {
+        ifaces[dev].filter((details) => details.family === 'IPv4' && details.internal === false ? address = details.address: undefined);
+    }
+
+    console.log(address);
+});
+
+
+const readdir = util.promisify(fs.readdir);
+
+const base_dir = process.argv[2] || __dirname;
+
+console.log("__dirname: ", __dirname)
+console.log("process.argv[2]: ", process.argv[2])
+
+app.get('/api/files', async (req, res) => {
+    let dir
+    console.log("/api/files req.query: ", req.query)
+    if (req.query.path && req.query.path !== "undefined") {
+        dir = base_dir + '/' + req.query.path
     }
     else {
+        // console.log("base_dir: ", base_dir)
+        dir = base_dir
+    }
+    // console.log("dir: ", dir)
+    listDir( dir).then(results => {
+        res.send(results)
+        // console.log("success");
+    })
+    .catch(err => {
+        console.log("error browsing files", err);
+        res.sendStatus(501)
+    });
+})
 
-        fs.exists(pathname, function (exist) {
-            if(!exist) {
-            // if the file is not found, return 404
-            res.statusCode = 404;
-            res.end(`File ${pathname} not found!`);
-            return;
-            }
 
-            // if is a directory, then look for index.html
-            // if (fs.statSync(pathname).isDirectory()) {
-            // pathname += '/index.html';
-            // }
+async function listDir(dir) {
+    let jsonResult = {}
+    // console.log("listDir");
+    let rel_dir = ""
+    let files
 
-            // read file from file system
-            fs.readFile(pathname, function(err, data){
-            if(err){
-                res.statusCode = 500;
-                res.end(`Error getting the file: ${err}.`);
-            } else {
-                // based on the URL path, extract the file extention. e.g. .js, .doc, ...
-                const ext = path.parse(pathname).ext;
-                // if the file is found, set Content-type and send data
-                res.setHeader('Content-type', mime.lookup(ext) || 'text/plain' );
-                res.end(data);
-            }
-            });
-        });
+    try {
+        files = await readdir(dir);
+    } catch (err) {
+        console.log(err)
+    }
+    files = files.filter(item => !(/(^|\/)\.[^\/\.]/g).test(item));
+    files.forEach(file => {
+        jsonResult[file] = rel_dir + "/" + file
+        let is_dir = false
+
+        
+        // Is directory?
+        let file_path = dir + '\\' + file
+        // console.log("isDirectory file_path: ", file_path);
+        if (fs.existsSync(file_path) && fs.lstatSync(file_path).isDirectory()){
+            is_dir = true
+            // console.log("isDirectory file: ", file);
+        }
+
+
+        jsonResult[file] = is_dir
+        // res.write('<li><a href="' + rel_dir + "/" + file + '">' + file_name_relative + '</a></li>')
+    });
+    // console.log("jsonResult: ", jsonResult)
+    return jsonResult
+}
+
+
+app.get('/api/download', async (req, res) => {
+    console.log("/api/download")
+    const file = req.query.file
+    downloadFile(file, res).then(() => {
+        // res.send(results)
+        console.log("success")
+    })
+    .catch(err => {
+        console.log("error", err)
+        res.sendStatus(501)
+    });
+})
+
+
+async function downloadFile(file, res) {
+    console.log("downloadFile file: ", file)
+    
+    let file_path = base_dir + '\\' + file
+    if (fs.existsSync(file_path) && fs.lstatSync(file_path).isDirectory()){
+        is_dir = true
+        // console.log("isDirectory file: ", file);
     }
 
+    res.download(file_path)
+}
 
-}).listen(parseInt(port));
 
-console.log(`Server listening on port ${port}`);
+app.get('/api/downloadDir', async (req, res) => {
+    const dir = req.query.dir;
+    console.log("downloadDir. dir: ", dir)
+    await zipDir(base_dir, dir, res).then((output_path) => {
+        // res.send(results)
+        console.log("success downloadDir")
+    })
+    .catch(err => {
+        console.log("error", err)
+        res.sendStatus(501)
+    });
+})
+
+
+async function zipDir(rel_directory, dir, res) {
+    console.log("rel_directory:  ", rel_directory)
+    console.log("dir:  ", dir)
+    
+    let archive = archiver('zip', {
+      zlib: { level: myConstClass.COMPRESSION_LEVEL } // Sets the compression level.
+    });
+
+    archive.on('warning', function(err) {
+        if (err.code === 'ENOENT') {
+            // log warning
+            console.log('Zipping error. ENOENT.')
+        } else {
+            // throw error
+            throw err
+        }
+    });
+
+    archive.on('error', function(err) {
+        throw err
+    });
+
+    res.writeHead(200, {
+        "Content-Type": "application/zip",
+        "Content-Disposition": "attachment; filename=" + dir + ".zip"
+    });
+
+    // pipe archive data to the result
+    archive.pipe(res)
+    archive.directory(rel_directory + '/' + dir, dir)
+    
+    // finalize the archive (ie we are done appending files but streams have to finish yet)
+    // 'close', 'end' or 'finish' may be fired right after calling this method so register to them beforehand
+    archive.finalize()
+    console.log("finalized archive")
+}
+
+app.post('/api/upload', async (req, res) => {
+    console.log("/api/upload.")
+
+    uploadFile(req, res).then(() => {
+        // res.send(results)
+        console.log("upload success")
+    })
+    .catch(err => {
+        console.log("upload error", err)
+        res.sendStatus(501)
+    });
+})
+
+
+async function uploadFile(req, res) {
+    console.log("uploadFile req.files: ", req.files)
+
+    try {
+        if(!req.files) {
+            console.log("!req.files")
+            res.send({
+                status: false,
+                message: 'No file uploaded'
+            });
+        } else {
+            let file = req.files.file;
+            
+            //Use the mv() method to place the file in upload directory (i.e. "uploads")
+            file.mv(base_dir + '\\' + file.name);
+
+            //send response
+            res.send({
+                status: true,
+                message: 'File is uploaded',
+                data: {
+                    name: file.name,
+                    mimetype: file.mimetype,
+                    size: file.size
+                }
+            });
+        }
+    } catch (err) {
+        res.status(500).send(err);
+    }
+};
+
+
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+    var port = parseInt(val, 10);
+  
+    if (isNaN(port)) {
+      // named pipe
+      return val;
+    }
+  
+    if (port >= 0) {
+      // port number
+      return port;
+    }
+  
+    return false;
+  }

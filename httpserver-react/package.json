@@ -8,11 +8,10 @@
     "@testing-library/user-event": "^7.2.1",
     "archiver": "^4.0.1",
     "axios": "^0.19.2",
-    "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "qrcode": "^1.4.4",
+    "http-proxy-middleware": "^1.0.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-dropzone": "^11.0.1",
     "react-scripts": "3.4.1",
     "util": "^0.12.3"
   },
