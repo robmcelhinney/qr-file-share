@@ -45,7 +45,7 @@ console.log("process.argv[2]: ", process.argv[2])
 
 app.get('/api/files', async (req, res) => {
     let dir
-    console.log("/api/files req.query: ", req.query)
+    // console.log("/api/files req.query: ", req.query)
     if (req.query.path && req.query.path !== "undefined") {
         dir = base_dir + '/' + req.query.path
     }
@@ -59,7 +59,7 @@ app.get('/api/files', async (req, res) => {
         // console.log("success");
     })
     .catch(err => {
-        console.log("error browsing files", err);
+        console.error("error browsing files", err);
         res.sendStatus(501)
     });
 })
@@ -74,7 +74,7 @@ async function listDir(dir) {
     try {
         files = await readdir(dir);
     } catch (err) {
-        console.log(err)
+        console.error(err)
     }
     files = files.filter(item => !(/(^|\/)\.[^\/\.]/g).test(item));
     files.forEach(file => {
@@ -100,14 +100,14 @@ async function listDir(dir) {
 
 
 app.get('/api/download', async (req, res) => {
-    console.log("/api/download")
+    // console.log("/api/download")
     const file = req.query.file
     downloadFile(file, res).then(() => {
         // res.send(results)
-        console.log("success")
+        // console.log("success")
     })
     .catch(err => {
-        console.log("error", err)
+        console.error("error", err)
         res.sendStatus(501)
     });
 })
@@ -128,21 +128,21 @@ async function downloadFile(file, res) {
 
 app.get('/api/downloadDir', async (req, res) => {
     const dir = req.query.dir;
-    console.log("downloadDir. dir: ", dir)
+    // console.log("downloadDir. dir: ", dir)
     await zipDir(base_dir, dir, res).then((output_path) => {
         // res.send(results)
-        console.log("success downloadDir")
+        // console.log("success downloadDir")
     })
     .catch(err => {
-        console.log("error", err)
+        console.error("error", err)
         res.sendStatus(501)
     });
 })
 
 
 async function zipDir(rel_directory, dir, res) {
-    console.log("rel_directory:  ", rel_directory)
-    console.log("dir:  ", dir)
+    // console.log("rel_directory:  ", rel_directory)
+    // console.log("dir:  ", dir)
     
     let archive = archiver('zip', {
       zlib: { level: myConstClass.COMPRESSION_LEVEL } // Sets the compression level.
@@ -150,7 +150,7 @@ async function zipDir(rel_directory, dir, res) {
 
     archive.on('warning', function(err) {
         if (err.code === 'ENOENT') {
-            console.log('Zipping error. ENOENT.')
+            console.error('Zipping error. ENOENT.')
         } else {
             // throw error
             throw err
@@ -176,21 +176,35 @@ async function zipDir(rel_directory, dir, res) {
 }
 
 app.post('/api/upload', async (req, res) => {
-    console.log("/api/upload.")
+    // console.log("/api/upload.")
 
     uploadFile(req, res).then(() => {
         // res.send(results)
-        console.log("upload success")
+        // console.log("upload success")
     })
     .catch(err => {
-        console.log("upload error", err)
+        console.error("upload error", err)
         res.sendStatus(501)
     });
 })
 
-function moveFile(file, data) {
+async function moveFile(file, data, rel_dir) {
     //move photo to uploads directory
-    file.mv(base_dir + '\\' + file.name);
+    let new_name = file.name
+    let dir = base_dir + '\\' + rel_dir
+    // console.log("dir: ", dir)
+    try {
+        fs.accessSync(dir + '\\' + new_name);
+        let name = new_name.substring(0, new_name.lastIndexOf("."))
+        let file_extension = new_name.substring(new_name.lastIndexOf("."))
+        new_name = await nonExistingName(name, file_extension, 0, dir)
+    } catch (err) {
+        // console.log("moveFile. fs.accessSync(new_name)")
+    }
+    // console.log("moveFile. new new_name: ", new_name, ". base_dir: ", base_dir)
+    let full_path = dir + '\\' + new_name
+    // console.log("moveFile. full_path: ", full_path)
+    file.mv(full_path);
 
     //push file details
     data.push({
@@ -198,36 +212,49 @@ function moveFile(file, data) {
         mimetype: file.mimetype,
         size: file.size
     });
+    return data
 }
 
+
+async function nonExistingName(name, file_extension, count, dir) {
+    // console.log("nonExistingName: name, file_extension: ", name, file_extension)
+    try {
+        fs.accessSync(dir + '\\' + name + "_" + count + file_extension);
+        return await nonExistingName(name, file_extension, count + 1, dir)
+    }
+    catch (err) {// file does not exist.//
+    }
+    return name + "_" + count + file_extension
+}
+
+
 async function uploadFile(req, res) {
-    console.log("uploadFile req.files: ", req.files)
+    // console.log("uploadFile req.files: ", req.files)
 
     try {
         if(!req.files) {
-            console.log("!req.files")
+            // console.log("!req.files")
             res.send({
                 status: false,
                 message: 'No file uploaded'
             });
         } else {
             let data = []; 
-            console.log("uploadFile before for each")
-            console.log("req.files.file.length: ", req.files.file.length)
-            console.log("req.files.file: ", req.files.file)
-            // Check if single file or group of files
             let message;
+            const rel_dir = req.body.rel_dir;
+            // console.log("rel_dir: ", rel_dir)
+            // Check if single file or group of files
             if (req.files.file && !Array.isArray(req.files.file)) {
                 let file = req.files.file;
-                console.log("single file")
-                moveFile(file, data)
+                // console.log("single file")
+                data = moveFile(file, data, rel_dir)
                 message = "File is uploaded"
             }
             else {
                 for (let i = 0; i < req.files.file.length; i++) {
                     let file = req.files.file[i];
-                    console.log("inside before for each. : ")
-                    moveFile(file, data)
+                    // console.log("inside before for each. : ")
+                    data = moveFile(file, data, rel_dir)
                     message = "Files are uploaded"
                 };
             }
@@ -245,7 +272,7 @@ async function uploadFile(req, res) {
 };
 
 app.get('/api/baseDir', async (req, res) => {
-    console.log("/api/baseDir: ", base_dir)
+    // console.log("/api/baseDir: ", base_dir)
     res.send(base_dir)
 })
 
