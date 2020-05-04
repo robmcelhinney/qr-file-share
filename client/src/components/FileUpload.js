@@ -8,6 +8,7 @@ import Snackbar from '@material-ui/core/Snackbar'
 import MuiAlert from '@material-ui/lab/Alert'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import {makeStyles, withStyles} from '@material-ui/core/styles'
+import iconUpload from '../assets/icons/icon-upload.svg'
 
 
 function Alert(props) {
@@ -131,13 +132,17 @@ export const FileUpload = () => {
 
     return (
         <div>
-            <section className="container">
+            <section className={"container cursor-pointer"}>
             <Dropzone onDrop={handleChange}>
                 {({ getRootProps, getInputProps }) => (
                 <div {...getRootProps({ className: "dropzone" })}>
                     <input {...getInputProps()} />
+                    <img src={iconUpload} alt="Upload icon" 
+                    className={"text-gray-700 mx-auto mb-1 " + 
+                        "h-6 w-6 md:h-8 md:w-8"}
+                    onClick={refreshFiles} />
                     <p className={"text-base text-gray-700"}>Upload Files to current directory</p>
-                    <p className={"text-sm text-gray-500"}>Drag'n'drop files, or click to select files</p>
+                    <p className={"text-sm text-gray-500"}>Drag & drop files, or tap to select files</p>
                 </div>
                 )}
             </Dropzone>
