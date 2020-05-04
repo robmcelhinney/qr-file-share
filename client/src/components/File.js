@@ -1,5 +1,5 @@
 import React from 'react'
-import {useSelector} from "react-redux";
+import {useSelector} from "react-redux"
 import iconFile from '../assets/icons/icon-file.svg'
 import iconFolder from '../assets/icons/icon-folder.svg'
 import iconArchive from '../assets/icons/icon-archive.svg'
@@ -7,7 +7,8 @@ import {simplifyParentPath} from '../utils/pathHelper'
 
 export const File = ({ file, isDir, getFiles, parentDir, currentDir }) => {
 	  
-    const relDir = useSelector(state => state.relDir)	
+	const relDir = useSelector(state => state.relDir)
+
 
     const downloadLink = () => {
 		let path
@@ -33,7 +34,7 @@ export const File = ({ file, isDir, getFiles, parentDir, currentDir }) => {
 				<span onClick={() => getFiles(path)}
 						className={"text-gray-700 ml-2" + 
 						(currentDir === true ? 
-						"" : " cursor-pointer") }>
+						"" : " cursor-pointer")}>
 					{file}
 				</span>
 				{/* Download */}
@@ -66,5 +67,5 @@ export const File = ({ file, isDir, getFiles, parentDir, currentDir }) => {
             	{downloadLink()}
 			</div>
         </div>
-	);
-};
+	)
+}

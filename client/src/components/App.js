@@ -1,6 +1,6 @@
-import React from 'react';
-import {Files} from './Files';
-import {Upload} from './Upload';
+import React from 'react'
+import {Files} from './Files'
+import {FileUpload} from './FileUpload'
 
 class App extends React.Component {
 
@@ -8,12 +8,12 @@ class App extends React.Component {
 		return (
 			<div className={"App bg-white rounded-lg p-6"}>
 				<div id={"mainContent"}>
-					<Upload />
+					<FileUpload />
 					<Files />
 				</div>
 			</div>
-		);
+		)
 	}
 }
 
-export default App;
+export default App

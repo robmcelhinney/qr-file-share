@@ -8,7 +8,7 @@ import axios from 'axios'
 
 export const Files = () => {
 
-    const [baseDir, setBaseDir] = useState('');
+    const [baseDir, setBaseDir] = useState('')
 
 	const dispatch = useDispatch()
 
@@ -17,14 +17,14 @@ export const Files = () => {
 
 	useEffect(() => {
         setRelDirRefreshFiles("")
-    }, []);
+    }, [])
 
     useEffect(() => {
-        fetchBaseDir();
-      }, []);
+        fetchBaseDir()
+      }, [])
 
     async function fetchBaseDir() {
-        const res = await axios.get("/api/baseDir");
+        const res = await axios.get("/api/baseDir")
         console.log("fetch res.data: ", res.data)
         setBaseDir(res.data)
     }
@@ -32,12 +32,12 @@ export const Files = () => {
     const setRelDirRefreshFiles = async (path) => {
         console.log("setRelDirRefreshFiles")
         dispatch(setRelDir(getRelDir(path)))
-        const files = await getFiles(path);
+        const files = await getFiles(path)
         dispatch(setFiles(files))
     }
 
     const refreshFiles = async () => {
-        const files = await getFiles(relDir);
+        const files = await getFiles(relDir)
         dispatch(setFiles(files))
     }
 
@@ -85,5 +85,5 @@ export const Files = () => {
                     currentDir={false}/>
             ))}
         </div>
-    );
+    )
 }

@@ -46,9 +46,9 @@ body {
 
 .dropzone {
     text-align: center;
-    padding: 20px;
+    padding: 2em;
     border: 3px dashed #eeeeee;
-    background-color: #fafafa;
+    background-color: #f9f9f9;
     color: #bdbdbd;
   }
 

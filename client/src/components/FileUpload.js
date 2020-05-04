@@ -1,7 +1,7 @@
-import React, {useState} from 'react';
-import {useDispatch, useSelector} from "react-redux";
-import axios from 'axios';
-import Dropzone from 'react-dropzone';
+import React, {useState} from 'react'
+import {useDispatch, useSelector} from "react-redux"
+import axios from 'axios'
+import Dropzone from 'react-dropzone'
 import {setFiles} from "../js/actions/index.js"
 import {getFiles} from '../utils/dirHelper'
 import Snackbar from '@material-ui/core/Snackbar'
@@ -11,7 +11,7 @@ import {makeStyles, withStyles} from '@material-ui/core/styles'
 
 
 function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
+    return <MuiAlert elevation={6} variant="filled" {...props} />
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -28,22 +28,22 @@ const StyledLinearProgress = withStyles({
       height: '1em',
       borderRadius: '1em'
     },
-})(LinearProgress);
+})(LinearProgress)
 
 
 export const FileUpload = () => {
-    const [uploadFile, setUploadFile] = useState([]); // storing the uploaded uploadFile
-    const [progress, setProgess] = useState(0); // progess bar
-    const [openToast, setOpenToast] = React.useState(false);
-    const [openToastFailed, setOpenToastFailed] = React.useState(false);
-    const [openToastSuccess, setOpenToastSuccess] = React.useState(false);
+    const [uploadFile, setUploadFile] = useState([]) // storing the uploaded uploadFile
+    const [progress, setProgess] = useState(0) // progess bar
+    const [openToast, setOpenToast] = React.useState(false)
+    const [openToastFailed, setOpenToastFailed] = React.useState(false)
+    const [openToastSuccess, setOpenToastSuccess] = React.useState(false)
 
 	const dispatch = useDispatch()
 
     const relDir = useSelector(state => state.relDir)
 
     const refreshFiles = async () => {
-        const files = await getFiles(relDir);
+        const files = await getFiles(relDir)
         dispatch(setFiles(files))
     }
 
@@ -51,13 +51,16 @@ export const FileUpload = () => {
 
     const handleChange = (acceptedFiles) => {
         setProgess(0)
-        console.log("handleChange. acceptedFiles: ", acceptedFiles);
-        setUploadFile(acceptedFiles); // storing uploadFile
-        uploadFiles(acceptedFiles);
+        console.log("handleChange. acceptedFiles: ", acceptedFiles)
+        setUploadFile(acceptedFiles) // storing uploadFile
+        uploadFiles(acceptedFiles)
+        // console.log("end of handleChange")
     }
 
     const uploadFiles = (files) => {
-        let formData = new FormData();
+        let formData = new FormData()
+        console.log("relDir: ", relDir)
+        formData.append('rel_dir', relDir)
         // console.log("uploadFiles: ", files)
         for (let i = 0; i < files.length; i++) {
             // console.log('files[i]', files[i])
@@ -69,11 +72,11 @@ export const FileUpload = () => {
                 setOpenToast(true)
                 let progress = Math.round(
                 ProgressEvent.loaded / ProgressEvent.total * 100)
-                setProgess(progress);
+                setProgess(progress)
             }
         }).then(res => {
             console.log("uploaded. res: ", res)
-            refreshFiles();
+            refreshFiles()
             setOpenToast(false)
             setOpenToastSuccess(true)
         }).catch(err => {
@@ -81,28 +84,29 @@ export const FileUpload = () => {
             setOpenToast(false)
             setOpenToastFailed(true)
         })
+        // console.log("end of uploadFiles")
     }
 
     const handleClose = () => {
         setOpenToastSuccess(false)
         setOpenToastFailed(false)
         setOpenToast(false)
-    };
+    }
 
     const displayUploadProgress = () => {
         console.log("displayUploadProgress. progress: ", progress)
         if (progress === 0) {
-            return;
+            return
         }
 
         return (
             <>
-            <div className="progessBar" style={{ width: progress }}
-                    className={"mt-4"}>
+            <div className={"progessBar mt-4"} style={{ width: progress }}>
                 {progress}
             </div>
             <div className={classes.root + " h-8"}>
-                <StyledLinearProgress variant="determinate" value={progress} className={"h-8"} />
+                <StyledLinearProgress variant="determinate" 
+                        value={progress} className={"h-8"} />
             </div>
             </>
         )
@@ -132,7 +136,8 @@ export const FileUpload = () => {
                 {({ getRootProps, getInputProps }) => (
                 <div {...getRootProps({ className: "dropzone" })}>
                     <input {...getInputProps()} />
-                    <p>Drag'n'drop files, or click to select files</p>
+                    <p className={"text-base text-gray-700"}>Upload Files to current directory</p>
+                    <p className={"text-sm text-gray-500"}>Drag'n'drop files, or click to select files</p>
                 </div>
                 )}
             </Dropzone>
@@ -160,5 +165,5 @@ export const FileUpload = () => {
                 </Alert>
             </Snackbar>
         </div>
-    );
+    )
 }
