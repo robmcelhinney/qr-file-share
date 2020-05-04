@@ -188,6 +188,17 @@ app.post('/api/upload', async (req, res) => {
     });
 })
 
+function moveFile(file, data) {
+    //move photo to uploads directory
+    file.mv(base_dir + '\\' + file.name);
+
+    //push file details
+    data.push({
+        name: file.name,
+        mimetype: file.mimetype,
+        size: file.size
+    });
+}
 
 async function uploadFile(req, res) {
     console.log("uploadFile req.files: ", req.files)
@@ -200,20 +211,32 @@ async function uploadFile(req, res) {
                 message: 'No file uploaded'
             });
         } else {
-            let file = req.files.file;
+            let data = []; 
+            console.log("uploadFile before for each")
+            console.log("req.files.file.length: ", req.files.file.length)
+            console.log("req.files.file: ", req.files.file)
+            // Check if single file or group of files
+            let message;
+            if (req.files.file && !Array.isArray(req.files.file)) {
+                let file = req.files.file;
+                console.log("single file")
+                moveFile(file, data)
+                message = "File is uploaded"
+            }
+            else {
+                for (let i = 0; i < req.files.file.length; i++) {
+                    let file = req.files.file[i];
+                    console.log("inside before for each. : ")
+                    moveFile(file, data)
+                    message = "Files are uploaded"
+                };
+            }
             
-            //Use the mv() method to place the file in upload directory (i.e. "uploads")
-            file.mv(base_dir + '\\' + file.name);
-
             //send response
             res.send({
                 status: true,
-                message: 'File is uploaded',
-                data: {
-                    name: file.name,
-                    mimetype: file.mimetype,
-                    size: file.size
-                }
+                message: message,
+                data: data
             });
         }
     } catch (err) {
@@ -221,6 +244,10 @@ async function uploadFile(req, res) {
     }
 };
 
+app.get('/api/baseDir', async (req, res) => {
+    console.log("/api/baseDir: ", base_dir)
+    res.send(base_dir)
+})
 
 
 /**

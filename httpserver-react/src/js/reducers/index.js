@@ -1,8 +1,8 @@
-import { REFRESH_DIR, SET_BASE_DIR } from "../constants/action-types";
+import { REFRESH_DIR, SET_REL_DIR } from "../constants/action-types";
 
 const initialState = {
     files: {"loading": ""},
-    baseDir: "/"
+    relDir: "/"
 };
   
 function rootReducer(state = initialState, action) {
@@ -11,9 +11,9 @@ function rootReducer(state = initialState, action) {
             files: action.payload
           });
     }
-    if (action.type === SET_BASE_DIR) {
+    if (action.type === SET_REL_DIR) {
         return Object.assign({}, state, {
-            baseDir: action.payload
+            relDir: action.payload
           });
     }
     return state;

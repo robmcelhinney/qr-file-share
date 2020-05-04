@@ -7,20 +7,20 @@ import {simplifyParentPath} from '../utils/pathHelper'
 
 export const File = ({ file, isDir, getFiles, parentDir, currentDir }) => {
 	  
-    const baseDir = useSelector(state => state.baseDir)	
+    const relDir = useSelector(state => state.relDir)	
 
     const downloadLink = () => {
 		let path
 		if (parentDir) {
-			path = simplifyParentPath(baseDir + file)
+			path = simplifyParentPath(relDir + file)
 			// console.log("parentDir true. path: ", path)
 		}
 		else if (currentDir) {
 			// console.log("currentDir: ", currentDir)
-			path = baseDir
+			path = relDir
 		}
 		else {
-			path = baseDir + file
+			path = relDir + file
 		}
 		if (isDir) {
 			return (

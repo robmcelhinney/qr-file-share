@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.9.12",
     "archiver": "^4.0.1",
     "cors": "^2.8.5",
     "express": "^4.17.1",

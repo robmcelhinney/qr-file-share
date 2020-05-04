@@ -2,7 +2,6 @@ import axios from 'axios'
 
 
 export const getFiles = async (path) => {
-    console.log("getFiles: path", path)
     // axios({
     //     method: "GET",
     //     url: "/api/files?path=" + path,
@@ -13,14 +12,14 @@ export const getFiles = async (path) => {
     //     console.log("res.data: ", res.data);
     //     return res.data
     // });
-    let res = await axios.get("/api/files?path=" + path);
-    console.log("res.data: ", res.data);
+    const res = await axios.get("/api/files?path=" + path);
+    // console.log("res.data: ", res.data);
     return res.data
 }
 
 
-export const getBaseDir = (path) => {
-    console.log("getBaseDir")
+export const getRelDir = (path) => {
+    console.log("getRelDir")
     if (path !== null && path !== undefined && path.length > 0) {
         return path + "/"
     }
