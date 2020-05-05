@@ -2,7 +2,7 @@
 Node.js http server allowing for file transfers over local area network made easier with QR code output on start.
 
 ## Download application
-[https://github.com/robmcelhinney/http-server/releases](https://github.com/robmcelhinney/http-server/releases)
+[https://github.com/robmcelhinney/qr-file-share/releases](https://github.com/robmcelhinney/qr-file-share/releases)
 
 ## Install
 

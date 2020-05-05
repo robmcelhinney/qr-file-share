@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const server = require("./server.js") /* the current working directory so that means main.js because of package.json */
 const meow = require("meow")
 const myConstClass = require('./constants.js')

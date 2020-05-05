@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const myConstClass = require('./constants.js')
 const fs = require('fs')
 const util = require('util')
