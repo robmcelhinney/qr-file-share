@@ -1,10 +1,11 @@
 {
-  "name": "httpserver",
+  "name": "qr-file-share",
   "version": "0.1.0",
   "private": true,
-  "description": "simple httpserver",
+  "description": "Node.js http server allowing for file transfers over local area network made easier with QR code output on start.",
   "main": "server.js",
   "bin": "bin.js",
+  "repository": "github:robmcelhinney/qr-file-share",
   "dependencies": {
     "@material-ui/core": "^4.9.12",
     "archiver": "^4.0.1",
@@ -16,9 +17,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified.\"",
-    "start-server": "node server.js",
-    "start": "npm run build-client && node server",
-    "start-local": "npm run build-client && node server",
+    "start-server": "node bin.js",
+    "start": "npm run build-client && node bin",
     "build-client": "cd client && npm run build && cd .."
   },
   "eslintConfig": {

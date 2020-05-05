@@ -40,7 +40,7 @@ module.exports = ({base_path, compression}) => {
 
     const readdir = util.promisify(fs.readdir)
 
-    console.log("base_path: " + base_path)
+    // console.log("base_path: " + base_path)
     const base_dir = base_path || process.cwd()
 
     app.get('/api/files', async (req, res) => {

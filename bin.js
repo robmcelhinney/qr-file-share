@@ -4,7 +4,7 @@ const myConstClass = require('./constants.js')
 
 const cli = meow(`
     Usage
-      $ httpserver
+      $ qr-file-share
  
     Options
       --path, -p  Run in given directory
@@ -27,7 +27,6 @@ const cli = meow(`
     }
 })
 
-
 const path = cli.flags.path != "" ? cli.flags.path : undefined
 const compression = Number.isInteger(cli.flags.compression) ? 
         cli.flags.compression : undefined
@@ -36,11 +35,6 @@ if (compression == undefined || (compression > 9 || !(compression >= 0))) {
     console.log("Zip Compression Level must be a number between 0 - 9.")
     return
 }
-
-
-console.log("cli.flags.path: ", cli.flags.path)
-console.log("path: ", path)
-
 
 server({
     base_path: path,
