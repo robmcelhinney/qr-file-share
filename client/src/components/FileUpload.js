@@ -52,19 +52,15 @@ export const FileUpload = () => {
 
     const handleChange = (acceptedFiles) => {
         setProgess(0)
-        console.log("handleChange. acceptedFiles: ", acceptedFiles)
+        // console.log("handleChange. acceptedFiles: ", acceptedFiles)
         setUploadFile(acceptedFiles) // storing uploadFile
         uploadFiles(acceptedFiles)
-        // console.log("end of handleChange")
     }
 
     const uploadFiles = (files) => {
         let formData = new FormData()
-        console.log("relDir: ", relDir)
         formData.append('rel_dir', relDir)
-        // console.log("uploadFiles: ", files)
         for (let i = 0; i < files.length; i++) {
-            // console.log('files[i]', files[i])
             formData.append('file', files[i])
         }
 
@@ -76,16 +72,14 @@ export const FileUpload = () => {
                 setProgess(progress)
             }
         }).then(res => {
-            console.log("uploaded. res: ", res)
             refreshFiles()
             setOpenToast(false)
             setOpenToastSuccess(true)
         }).catch(err => {
-            console.log(err)
+            console.error(err)
             setOpenToast(false)
             setOpenToastFailed(true)
         })
-        // console.log("end of uploadFiles")
     }
 
     const handleClose = () => {
@@ -95,7 +89,6 @@ export const FileUpload = () => {
     }
 
     const displayUploadProgress = () => {
-        console.log("displayUploadProgress. progress: ", progress)
         if (progress === 0) {
             return
         }
@@ -132,8 +125,8 @@ export const FileUpload = () => {
 
     return (
         <div>
-            <section className={"container cursor-pointer"}>
-            <Dropzone onDrop={handleChange}>
+            <section className={"container"}>
+            <Dropzone onDrop={handleChange} className={"cursor-pointer"}>
                 {({ getRootProps, getInputProps }) => (
                 <div {...getRootProps({ className: "dropzone" })}>
                     <input {...getInputProps()} />
@@ -141,8 +134,8 @@ export const FileUpload = () => {
                     className={"text-gray-700 mx-auto mb-1 " + 
                         "h-6 w-6 md:h-8 md:w-8"}
                     onClick={refreshFiles} />
-                    <p className={"text-base text-gray-700"}>Upload Files to current directory</p>
-                    <p className={"text-sm text-gray-500"}>Drag & drop files, or tap to select files</p>
+                    <p className={"text-base text-gray-700 font-semibold"}>Upload Files to current directory</p>
+                    <p className={"text-sm text-gray-500 font-medium"}>Drag & drop files, or tap to select files</p>
                 </div>
                 )}
             </Dropzone>

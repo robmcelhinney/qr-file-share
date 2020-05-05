@@ -8,7 +8,6 @@ export const getFiles = async (path) => {
 
 
 export const getRelDir = (path) => {
-    console.log("getRelDir")
     if (path !== null && path !== undefined && path.length > 0) {
         return path + "/"
     }

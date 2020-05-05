@@ -25,12 +25,11 @@ export const Files = () => {
 
     async function fetchBaseDir() {
         const res = await axios.get("/api/baseDir")
-        console.log("fetch res.data: ", res.data)
+        // console.log("fetch res.data: ", res.data)
         setBaseDir(res.data)
     }
   
     const setRelDirRefreshFiles = async (path) => {
-        console.log("setRelDirRefreshFiles")
         dispatch(setRelDir(getRelDir(path)))
         const files = await getFiles(path)
         dispatch(setFiles(files))
@@ -63,6 +62,11 @@ export const Files = () => {
                     parentDir={false} currentDir={true}/>
         )
     }
+    
+    const switchSlashes = (str) => {
+        return (str.replace(/\\/g, "/"))
+    }
+
 
     return (
         <div id={"file-list"} 
@@ -70,11 +74,11 @@ export const Files = () => {
                 "text-sm md:text-base mt-4"}>
             <span className={"flex"}>
                 <span className={"text-gray-500 font-medium ml-8"}>
-                    {baseDir}
+                    {switchSlashes(baseDir)}
                 </span>
                 <img src={iconRefresh} alt="Folder" 
                         className={"absolute right-0 text-gray-700 " + 
-                            "mr-8 h-5 w-5 md:h-6 md:w-6 cursor-pointer"}
+                            "mr-4 md:mr-8 h-5 w-5 md:h-6 md:w-6 cursor-pointer"}
                         onClick={refreshFiles} />
             </span>
             {currentDir()}

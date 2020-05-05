@@ -1,3 +1,0 @@
-qrcode
-
-Handle download error when file/dir missing.

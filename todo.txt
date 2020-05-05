@@ -1,0 +1,4 @@
+Change file icon based on file?
+Document for text or empty file icon for media?
+
+Handle download error when file/dir missing.

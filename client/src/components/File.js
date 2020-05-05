@@ -32,7 +32,7 @@ export const File = ({ file, isDir, getFiles, parentDir, currentDir }) => {
 							className={"h-5 w-5 md:h-6 md:w-6"} />}
 				
 				<span onClick={() => getFiles(path)}
-						className={"text-gray-700 ml-2" + 
+						className={"text-gray-700 ml-2 font-semibold mr-10" + 
 						(currentDir === true ? 
 						"" : " cursor-pointer")}>
 					{file}
@@ -41,7 +41,7 @@ export const File = ({ file, isDir, getFiles, parentDir, currentDir }) => {
 				<a href={"/api/downloadDir?dir="
 						+ path} download 
 						className={"absolute right-0 " + 
-						"text-gray-700 mr-8"}>
+						"text-gray-700 mr-4 md:mr-8"}>
 					<img src={iconArchive} alt="Archive" 
 							className={"h-5 w-5 md:h-6 md:w-6"}/>
 				</a>
