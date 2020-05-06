@@ -50,53 +50,18 @@ body {
     border: 3px dashed #eeeeee;
     background-color: #f9f9f9;
     color: #bdbdbd;
-  }
+}
+
+.overflow-text {
+    overflow-wrap: anywhere;
+}
 
 
-/*Responsive*/
-/*@media (min-width: 576px){*/
-    /*#mainContent {*/
-        /*width: 540px;*/
-    /*}*/
-/*}*/
-@media (max-width: 767px){
-    header nav{
-        position: static;
-    }
-    h2 {
-        display: none;
-    }
-}
-@media (min-width: 768px){
-    /*#mainContent {*/
-        /*width: 720px;*/
-    /*}*/
-    .project-card {
-        width: 47%;
-        max-width: 456px;
-    }
-}
-@media (min-width: 992px){
-    /*#mainContent {*/
-        /*width: 970px;*/
-    /*}*/
-
-    /*.project-card {*/
-        /*width: 30%;*/
-    /*}*/
-}
 @media (min-width: 1200px){
     #mainContent {
         max-width: 1140px;
     }
 }
-/*@media (min-width: 1440px){*/
-    /*#mainContent {*/
-        /*width: 1400px;*/
-    /*}*/
-/*}*/
-
-
 
 #footer {
     text-align: center;

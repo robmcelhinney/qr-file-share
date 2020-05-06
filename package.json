@@ -1,6 +1,6 @@
 {
   "name": "@robmcelhinney/qr-file-share",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Node.js http server allowing for file transfers over local area network made easier with QR code output on start.",
   "main": "server.js",
   "bin": "bin.js",
@@ -8,7 +8,6 @@
   "dependencies": {
     "@material-ui/core": "^4.9.12",
     "archiver": "^4.0.1",
-    "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-fileupload": "^1.1.7-alpha.3",
     "meow": "^6.1.1",

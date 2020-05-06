@@ -32,7 +32,7 @@ export const File = ({ file, isDir, getFiles, parentDir, currentDir }) => {
 							className={"h-5 w-5 md:h-6 md:w-6"} />}
 				
 				<span onClick={() => getFiles(path)}
-						className={"text-gray-700 ml-2 font-semibold mr-10" + 
+						className={"overflow-text text-gray-700 ml-2 font-semibold mr-10" + 
 						(currentDir === true ? 
 						"" : " cursor-pointer")}>
 					{file}
