@@ -22,6 +22,12 @@ Must be on same WiFi.
     $ cd /dir/to/share
     $ qr-file-share
 
+## Demo
+![screenshot of program running from command line](demo/screenshot.png)
+![screenshot of web interface on mobile](demo/mobile_screenshot.png)
+![Phone using camera to detect qr code](demo/sample.gif)
+
+
 ## Start & watch
 
     $ npm start

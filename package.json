@@ -44,5 +44,13 @@
     "assets": [
       "client/build/**"
     ]
-  }
+  },
+  "keywords": [
+    "qr",
+    "share",
+    "WiFi",
+    "terminal",
+    "file",
+    "share"
+  ]
 }
