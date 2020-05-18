@@ -24,19 +24,30 @@ module.exports = ({base_path, compression}) => {
 
     app.listen(port, () => {
         // get local ip address from https://gist.github.com/sviatco/9054346#gistcomment-1810845
-        let address,
-        ifaces = require('os').networkInterfaces()
+        let addresses = new Set()
+        let ifaces = require('os').networkInterfaces()
+        
         for (let dev in ifaces) {
             ifaces[dev].filter((details) => details.family === 'IPv4' && 
                     details.internal === false ? 
                     address = details.address: undefined)
+                // console.log("address: ", address)
+                addresses.add(address)
         }
 
-        const full_address = "http://" + address + ":" + port
-        console.log("Server listening on port: ", port)
-        console.log("Scan QR code or go to " + full_address)
-
-        qrcode.generate(full_address);
+        addresses = Array.from(addresses)
+        if (addresses.length == 0) {
+            return
+        }
+        // console.log("addresses: ", addresses)
+        for (address of addresses) {
+            const full_address = "http://" + address + ":" + port
+            console.log("Server listening on port: ", port)
+            console.log("Scan QR code or go to " + full_address)
+    
+            qrcode.generate(full_address)
+            console.log("\n")
+        }
     })
 
 
@@ -289,5 +300,5 @@ module.exports = ({base_path, compression}) => {
     })
 
 
-    app.use(express.static(path.join(__dirname, 'client/build')));
+    app.use(express.static(path.join(__dirname, 'client/build')))
 }
