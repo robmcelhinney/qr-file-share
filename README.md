@@ -22,6 +22,14 @@ Must be on same WiFi.
     $ cd /dir/to/share
     $ qr-file-share
 
+
+Manual
+
+	$ node bin
+Call other path
+
+	$ node bin --path=/path/to/share
+
 ## Demo
 ![screenshot of program running from command line](demo/screenshot.png)
 ![screenshot of web interface on mobile](demo/mobile_screenshot.png)
@@ -39,6 +47,19 @@ Also provides the local ip address and a qr code to view on another device on sa
 or
 
     $ node bin.js --help
+
+## DOCKER
+Does this need docker? Who knows? Probably not but I want to learn Docker.
+The QR code links to the container's ip so it doesn't work over the local network but should work on the device running the container.
+
+Build
+
+	$ docker build -t qr-file-share .
+
+Run
+
+	$ docker run -dp 8080:8080 --name qr-file-share --mount type=bind,source=/path/to/share,target=/target qr-file-share --path=/target
+
 
 
 ## Built With

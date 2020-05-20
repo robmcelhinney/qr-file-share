@@ -28,11 +28,13 @@ module.exports = ({base_path, compression}) => {
         let ifaces = require('os').networkInterfaces()
         
         for (let dev in ifaces) {
+            let address = undefined
             ifaces[dev].filter((details) => details.family === 'IPv4' && 
                     details.internal === false ? 
                     address = details.address: undefined)
-                // console.log("address: ", address)
+            if (address !== undefined) {
                 addresses.add(address)
+            }
         }
 
         addresses = Array.from(addresses)
