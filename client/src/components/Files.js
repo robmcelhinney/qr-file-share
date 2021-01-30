@@ -48,12 +48,17 @@ export const Files = () => {
         // console.log("relDir: ", relDir)
         if (relDir !== "/") {
             return (
-                <File file={".."} isDir={true} key={".."} 
-                        getFiles={setRelDirRefreshFiles}
-                        parentDir={true} currentDir={false}/>
-            )
+                <File
+                    file={".."}
+                    isDir={true}
+                    key={".."}
+                    getFiles={setRelDirRefreshFiles}
+                    parentDir={true}
+                    currentDir={false}
+                />
+            );
         }
-    }
+    };
     
     const currentDir = () => {
         return (

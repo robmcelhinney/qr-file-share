@@ -27,14 +27,13 @@ export const File = ({ file, isDir, getFiles, parentDir, currentDir }) => {
 			return (
 				<>
 				{/* Enter dir */}
-				{currentDir === false && 
+				{!currentDir && 
 					<img src={iconFolder} alt="Folder" 
 							className={"h-5 w-5 md:h-6 md:w-6"} />}
 				
 				<span onClick={() => getFiles(path)}
 						className={"overflow-text text-gray-700 ml-2 font-semibold mr-10" + 
-						(currentDir === true ? 
-						"" : " cursor-pointer")}>
+						(currentDir ? "" : " cursor-pointer")}>
 					{file}
 				</span>
 				{/* Download */}
@@ -47,18 +46,16 @@ export const File = ({ file, isDir, getFiles, parentDir, currentDir }) => {
 				</a>
 				</>)
 		}
-		else {
-			return (
-				<>
-					<img src={iconFile} alt="File" 
-							className={"h-5 w-5 md:h-6 md:w-6"}/>
-					<a href={"/api/download?file=" + path}
-							download className={"text-gray-700 ml-2"}>
-						{file}
-					</a>
-				</>
-			)
-		}
+		return (
+			<>
+				<img src={iconFile} alt="File" 
+						className={"h-5 w-5 md:h-6 md:w-6"}/>
+				<a href={"/api/download?file=" + path}
+						download className={"text-gray-700 ml-2"}>
+					{file}
+				</a>
+			</>
+		)
     }
 
 	return (

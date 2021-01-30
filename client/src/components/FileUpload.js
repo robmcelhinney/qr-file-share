@@ -71,7 +71,7 @@ export const FileUpload = () => {
                 ProgressEvent.loaded / ProgressEvent.total * 100)
                 setProgess(progress)
             }
-        }).then(res => {
+        }).then(_ => {
             refreshFiles()
             setOpenToast(false)
             setOpenToastSuccess(true)
