@@ -9,7 +9,7 @@ const archiver = require("archiver")
 const fileUpload = require("express-fileupload")
 const express = require("express"),
     app = express(),
-    port = "8080"
+    port = "8765"
 
 module.exports = ({ base_path, compression }) => {
     app.use(fileUpload())
@@ -38,7 +38,6 @@ module.exports = ({ base_path, compression }) => {
         if (addresses.length == 0) {
             return
         }
-        // console.log("addresses: ", addresses)
         for (address of addresses) {
             const full_address = "http://" + address + ":" + port
             console.log("Server listening on port: ", port)

@@ -35,7 +35,7 @@
     ]
   },
   "files": [
-    "/client/build",
+    "client/build",
     "bin.js",
     "server.js",
     "constants.js"
