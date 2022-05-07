@@ -1,6 +1,6 @@
 {
   "name": "@robmcelhinney/qr-file-share",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Node.js http server allowing for file transfers over local area network made easier with QR code output on start.",
   "main": "server.js",
   "bin": "bin.js",

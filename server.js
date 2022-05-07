@@ -7,11 +7,10 @@ const path = require("path")
 const qrcode = require("qrcode-terminal")
 const archiver = require("archiver")
 const fileUpload = require("express-fileupload")
-const express = require("express"),
-    app = express(),
-    port = "8765"
+const express = require("express")
+const app = express()
 
-module.exports = ({ base_path, compression }) => {
+module.exports = ({ base_path, compression, port }) => {
     app.use(fileUpload())
     // If want to limit file size add this:
     // app.use(fileUpload({
