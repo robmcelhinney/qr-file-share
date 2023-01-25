@@ -11,7 +11,10 @@ const express = require("express")
 const app = express()
 
 module.exports = ({ base_path, compression, port }) => {
-    app.use(fileUpload())
+    app.use(fileUpload({
+        useTempFiles: true,
+        tempFileDir: "/tmp/"
+    }))
     // If want to limit file size add this:
     // app.use(fileUpload({
     //     createParentPath: true,
