@@ -11,7 +11,8 @@
     "express": "^4.17.1",
     "express-fileupload": "^1.1.7-alpha.3",
     "meow": "^6.1.1",
-    "qrcode-terminal": "^0.12.0"
+    "qrcode-terminal": "^0.12.0",
+    "react-scripts": "^5.0.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified.\"",
