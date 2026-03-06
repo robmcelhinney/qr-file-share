@@ -17,7 +17,8 @@
     "test:browser": "playwright test",
     "start-server": "node bin.js",
     "start": "npm run build-client && node bin.js",
-    "build-client": "npm --prefix client run build"
+    "build-client": "npm --prefix client run build",
+    "build:binaries": "npm run build-client && node scripts/build-binaries.js"
   },
   "files": [
     "client/dist",
@@ -39,6 +40,7 @@
     "share"
   ],
   "devDependencies": {
-    "@playwright/test": "^1.58.2"
+    "@playwright/test": "^1.58.2",
+    "pkg": "^5.8.1"
   }
 }

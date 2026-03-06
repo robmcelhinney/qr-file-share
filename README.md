@@ -111,6 +111,19 @@ CI runs `npm test`, `npm --prefix client run build`, and `npm run test:browser` 
 
 See [RELEASE.md](RELEASE.md) for the publish checklist.
 
+There is a `Release Assets` workflow that runs when a GitHub release is published and uploads:
+- `qr-file-share-linux`
+- `qr-file-share-macos`
+- `qr-file-share-win.exe`
+
+You can also build them locally with:
+
+```sh
+npm run build:binaries
+```
+
+The standalone executables currently use `pkg` Node 18 targets because `pkg` does not provide Node 20 base binaries.
+
 There is also a manual GitHub Actions workflow named `Publish` that reruns tests and publishes to npm with `NPM_TOKEN`.
 
 ## Demo
