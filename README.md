@@ -107,6 +107,12 @@ npm run test:browser
 
 CI runs `npm test`, `npm --prefix client run build`, and `npm run test:browser` on every push and pull request.
 
+## Release
+
+See [RELEASE.md](RELEASE.md) for the publish checklist.
+
+There is also a manual GitHub Actions workflow named `Publish` that reruns tests and publishes to npm with `NPM_TOKEN`.
+
 ## Demo
 
 ![screenshot of program running from command line](demo/screenshot.png)

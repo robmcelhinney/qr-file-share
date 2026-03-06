@@ -192,6 +192,27 @@ function logMutation(event, details = {}) {
     console.log(`[qr-file-share] ${event}${suffix ? " " + suffix : ""}`)
 }
 
+function formatByteCount(bytes) {
+    if (!Number.isFinite(bytes) || bytes < 0) {
+        return "unknown"
+    }
+
+    if (bytes < 1024) {
+        return `${bytes} B`
+    }
+
+    const units = ["KB", "MB", "GB", "TB"]
+    let value = bytes
+    let unitIndex = -1
+
+    while (value >= 1024 && unitIndex < units.length - 1) {
+        value /= 1024
+        unitIndex += 1
+    }
+
+    return `${value.toFixed(value >= 10 ? 0 : 1)} ${units[unitIndex]}`
+}
+
 function isPrivateLanAddress(address) {
     if (/^192\.168\.\d{1,3}\.\d{1,3}$/.test(address)) {
         return true
@@ -285,6 +306,22 @@ function selectListenAddresses(
     return preferredAddress ? [preferredAddress] : []
 }
 
+function getStartupMutationSummary(capabilities) {
+    if (capabilities.readOnly) {
+        return "read only"
+    }
+
+    if (capabilities.uploadTokenRequired) {
+        return capabilities.deleteEnabled
+            ? "token required for uploads and deletes"
+            : "token required for uploads"
+    }
+
+    return capabilities.deleteEnabled
+        ? "uploads and deletes enabled"
+        : "uploads enabled, deletes disabled"
+}
+
 async function uniqueDestinationPath(directory, filename) {
     const ext = path.extname(filename)
     const baseName = path.basename(filename, ext) || "file"
@@ -337,20 +374,44 @@ async function addDirectoryToZip(
     }
 }
 
-function logServerAddresses(port, capabilities, resolvedUploadToken) {
+function logServerAddresses(
+    port,
+    capabilities,
+    resolvedUploadToken,
+    {
+        baseDir,
+        maxFileSizeBytes,
+        tempUploadDir,
+    } = {},
+) {
     const interfaces = os.networkInterfaces()
     const addresses = selectListenAddresses(interfaces)
+    const primaryUrl = addresses[0]
+        ? `http://${addresses[0].address}:${port}`
+        : `http://localhost:${port}`
 
-    if (addresses.length === 0) {
-        console.log("Server listening on port:", port)
+    console.log("QR File Share")
+    console.log(`  URL:          ${primaryUrl}`)
+    console.log(`  Share dir:    ${baseDir || process.cwd()}`)
+    console.log(`  Access:       ${getStartupMutationSummary(capabilities)}`)
+    console.log(`  Max upload:   ${formatByteCount(maxFileSizeBytes)}`)
+    console.log(`  Temp uploads: ${tempUploadDir || DEFAULT_TEMP_UPLOAD_DIR}`)
+
+    if (resolvedUploadToken.mode === "session") {
+        console.log(`  Session token: ${resolvedUploadToken.value}`)
     }
 
-    for (const details of addresses) {
-        const fullAddress = `http://${details.address}:${port}`
-        // console.log("Server listening on port:", port)
-        console.log("Scan QR code or go to " + fullAddress)
-        qrcode.generate(fullAddress)
-        console.log("\n")
+    console.log("")
+    console.log("Scan QR code or open:")
+    console.log(primaryUrl)
+    qrcode.generate(primaryUrl)
+
+    if (DEFAULT_SHOW_ALL_ADDRESSES && addresses.length > 1) {
+        console.log("")
+        console.log("Other interfaces:")
+        for (const details of addresses.slice(1)) {
+            console.log(`  http://${details.address}:${port}`)
+        }
     }
 
     if (!DEFAULT_SHOW_ALL_ADDRESSES && addresses.length === 1) {
@@ -763,7 +824,11 @@ function startServer({ base_path, compression, port }) {
     })
 
     const server = app.listen(port, () => {
-        logServerAddresses(port, capabilities, resolvedUploadToken)
+        logServerAddresses(port, capabilities, resolvedUploadToken, {
+            baseDir: path.resolve(base_path || process.cwd()),
+            maxFileSizeBytes: DEFAULT_MAX_FILE_SIZE_BYTES,
+            tempUploadDir: path.resolve(DEFAULT_TEMP_UPLOAD_DIR),
+        })
     })
 
     server.requestTimeout = DEFAULT_REQUEST_TIMEOUT_MS
@@ -776,3 +841,4 @@ module.exports = startServer
 module.exports.createApp = createApp
 module.exports.startServer = startServer
 module.exports.selectListenAddresses = selectListenAddresses
+module.exports.getStartupMutationSummary = getStartupMutationSummary
