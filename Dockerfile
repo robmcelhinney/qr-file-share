@@ -1,20 +1,26 @@
-FROM node:10-alpine
+FROM node:20-alpine AS build
 
-# Create app directory
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# Install app dependencies
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-# where available (npm@5+)
+COPY client/package*.json ./client/
+RUN npm --prefix client ci
+
+COPY client ./client
+RUN npm --prefix client run build
+
 COPY package*.json ./
+RUN npm ci --omit=dev
 
-# RUN npm install
-# If you are building your code for production
-RUN npm ci --only=production
+FROM gcr.io/distroless/nodejs20-debian12
 
-# Bundle app source
-COPY . .
+WORKDIR /app
 
-EXPOSE 8080
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/bin.js ./bin.js
+COPY --from=build /app/constants.js ./constants.js
+COPY --from=build /app/server.js ./server.js
+COPY --from=build /app/client/dist ./client/dist
 
-ENTRYPOINT [ "node", "bin.js" ]
+EXPOSE 8765
+
+CMD ["bin.js"]

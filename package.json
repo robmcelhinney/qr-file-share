@@ -6,44 +6,28 @@
   "bin": "bin.js",
   "repository": "github:robmcelhinney/qr-file-share",
   "dependencies": {
-    "@material-ui/core": "^4.9.12",
-    "archiver": "^4.0.1",
-    "express": "^4.17.1",
-    "express-fileupload": "^1.1.7-alpha.3",
-    "meow": "^6.1.1",
+    "express": "^5.2.1",
+    "express-fileupload": "^1.5.1",
     "qrcode-terminal": "^0.12.0",
-    "react-scripts": "^5.0.1"
+    "supertest": "^7.1.0",
+    "yazl": "^3.3.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified.\"",
+    "test": "node --test",
+    "test:browser": "playwright test",
     "start-server": "node bin.js",
-    "start": "npm run build-client && node bin",
-    "build-client": "cd client && npm run build && cd .."
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "start": "npm run build-client && node bin.js",
+    "build-client": "npm --prefix client run build"
   },
   "files": [
-    "client/build",
+    "client/dist",
     "bin.js",
     "server.js",
     "constants.js"
   ],
   "pkg": {
     "assets": [
-      "client/build/**"
+      "client/dist/**"
     ]
   },
   "keywords": [
@@ -53,5 +37,8 @@
     "terminal",
     "file",
     "share"
-  ]
+  ],
+  "devDependencies": {
+    "@playwright/test": "^1.58.2"
+  }
 }
